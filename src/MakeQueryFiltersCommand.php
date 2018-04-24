@@ -16,21 +16,21 @@ class MakeQueryFiltersCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:query-filters';
+    protected $name = 'make:query-filter';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new query filters class';
+    protected $description = 'Create a new query filter class';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Query filters';
+    protected $type = 'Query filter';
 
     /**
      * Get the stub file for the generator.
