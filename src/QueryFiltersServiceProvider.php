@@ -18,7 +18,7 @@ class QueryFilterServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->mergeConfigFrom(__DIR__ . '/query_filter.php', 'query_filter');
+        $this->mergeConfigFrom(__DIR__ . '/../config/query_filter.php', 'query_filter');
 
         if ($this->app->runningInConsole()) {
             $this->publish();
@@ -32,7 +32,7 @@ class QueryFilterServiceProvider extends ServiceProvider
     public function publish()
     {
         $this->publishes([
-            __DIR__ . '/config/query_filter.php' => config_path('query_filter.php'),
+            __DIR__ . '/../config/query_filter.php' => config_path('query_filter.php'),
         ], 'query_filter_config');
     }
 }
