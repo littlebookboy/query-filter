@@ -9,7 +9,7 @@ use Illuminate\Console\GeneratorCommand;
  *
  * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
  */
-class MakeQueryFiltersCommand extends GeneratorCommand
+class MakeQueryFilterCommand extends GeneratorCommand
 {
     /**
      * The console command name.

@@ -22,7 +22,7 @@ class QueryFilterServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publish();
-            $this->commands(MakeQueryFiltersCommand::class);
+            $this->commands(MakeQueryFilterCommand::class);
         }
     }
 
