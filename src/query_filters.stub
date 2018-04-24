@@ -1,0 +1,13 @@
+<?php
+
+namespace DummyNamespace;
+
+use Kblais\QueryFilter\QueryFilter;
+
+/**
+ * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
+ */
+class DummyClass extends QueryFilter
+{
+    //
+}

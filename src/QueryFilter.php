@@ -25,6 +25,14 @@ abstract class QueryFilter
     protected $builder;
 
     /**
+     * List of filters not requiring a value.
+     *
+     * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
+     * @var array
+     */
+    protected $implicitFilters = [];
+
+    /**
      * Create a new QueryFilters instance.
      *
      * @param Request $request
@@ -32,6 +40,19 @@ abstract class QueryFilter
     public function __construct(Request $request)
     {
         $this->request = $request;
+    }
+
+    /**
+     * Hydrate the filters from plain array.
+     *
+     * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
+     * @param    array    $queries
+     * @return    static
+     */
+    public static function hydrate(array $queries)
+    {
+        $request = new Request($queries);
+        return new static($request);
     }
 
     /**
@@ -51,7 +72,7 @@ abstract class QueryFilter
         foreach ($this->filters() as $name => $value) {
             $methodName = camel_case($name);
             $value = array_filter([$value]);
-            if ($this->shouldCall($methodName, $value)) {
+            if ($this->filterCanBeApplied($methodName, $value) && $this->shouldCall($methodName, $value)) {
                 call_user_func_array([$this, $methodName], $value);
             }
         }
@@ -106,16 +127,28 @@ abstract class QueryFilter
      */
     protected function shouldCall($methodName, array $value)
     {
-        if (!method_exists($this, $methodName)) {
-            return false;
-        }
-
         $method = new ReflectionMethod($this, $methodName);
         /** @var ReflectionParameter $parameter */
         $parameter = Arr::first($method->getParameters());
 
         return $value ? $method->getNumberOfParameters() > 0 :
             $parameter === null || $parameter->isDefaultValueAvailable();
+    }
+
+    /**
+     * Determine whether the given filter can be applied with the provided value.
+     *
+     * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
+     * @param string $filter
+     * @param mixed $value
+     * @return boolean
+     */
+    protected function filterCanBeApplied($filter, $value)
+    {
+        $filterExists = method_exists($this, $filter);
+        $hasValue = $value !== '' && $value !== null;
+        $valueIsLegit = $hasValue || in_array($filter, $this->implicitFilters);
+        return $filterExists && $valueIsLegit;
     }
 
     /**
