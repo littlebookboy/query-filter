@@ -28,5 +28,14 @@
     "require-dev": {
         "orchestra/testbench": "^3.2",
         "phpunit/phpunit": "^4.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Kblais\\QueryFilter\\QueryFilterServiceProvider"
+            ],
+            "aliases": {
+            }
+        }
     }
 }
