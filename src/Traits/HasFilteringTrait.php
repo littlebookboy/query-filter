@@ -23,10 +23,10 @@ trait HasFilteringTrait
     */
     /**
      * add a filter to condition array
-     * @param $filter
-     * @param $value
+     * @param string $filter 欄位名稱
+     * @param array|string|number $value 過濾條件
      */
-    public function addFilter($filter, $value)
+    public function addFilter(string $filter, $value)
     {
         $this->filterBy[$filter] = $value;
     }

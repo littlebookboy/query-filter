@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Kblais\QueryFilter\Traits\HasFilteringTrait;
 use ReflectionMethod;
 use ReflectionParameter;
 
 abstract class QueryFilter
 {
+    use HasFilteringTrait;
+
     /**
      * The request object.
      *
@@ -68,6 +71,7 @@ abstract class QueryFilter
             $value = array_filter([$value]);
             if ($this->shouldCall($methodName, $value)) {
                 call_user_func_array([$this, $methodName], $value);
+                $this->addFilter($methodName, $value);
             }
         }
 

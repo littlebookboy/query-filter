@@ -23,12 +23,12 @@ trait HasSortingTrait
     */
     /**
      * add a filter to condition array
-     * @param $sorter
-     * @param $value
+     * @param string $field 欄位名稱
+     * @param string $order 排序條件
      */
-    public function addSorter($sorter, $value)
+    public function addSorter(string $field, string $order)
     {
-        $this->sortBy[$sorter] = $value;
+        $this->sortBy[$field] = $order;
     }
 
     /**
