@@ -23,6 +23,38 @@ class QueryFilterTest extends TestCase
         $this->assertContains($expected, $builder->getQuery()->wheres);
     }
 
+    public function testMultiLikeFilterApplies()
+    {
+        $builder = $this->makeBuilder(Filters\PostMultiLikeFilter::class);
+
+        // Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo, adipisci!
+        $expected = [
+            [
+                "type" => "Basic",
+                "column" => "content",
+                "operator" => "LIKE",
+                "value" => "%Lorem%",
+                "boolean" => "and",
+            ],
+            [
+                "type" => "Basic",
+                "column" => "content",
+                "operator" => "LIKE",
+                "value" => "%ipsum%",
+                "boolean" => "and",
+            ],
+            [
+                "type" => "Basic",
+                "column" => "content",
+                "operator" => "LIKE",
+                "value" => "%dolor%",
+                "boolean" => "and",
+            ]
+        ];
+
+        $this->assertArraySubset($expected, $builder->getQuery()->wheres);
+    }
+
     public function testEqualsFilterApplies()
     {
         $builder = $this->makeBuilder(Filters\PostEqualsFilter::class);

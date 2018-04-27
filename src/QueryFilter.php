@@ -209,6 +209,30 @@ abstract class QueryFilter
     }
 
     /**
+     * Helper for Multi "LIKE" filter
+     *
+     * @param  string $column
+     * @param  string $value
+     * @return Builder
+     */
+    protected function multiLike(string $column, string $value): Builder
+    {
+        $words = array_filter(explode(' ', $value));
+
+        if ($this->builder->getQuery()->getConnection()->getDriverName() == 'pgsql') {
+            foreach ($words as $word) {
+                $this->builder->where($column, 'ILIKE', '%' . $word . '%');
+            }
+            return $this->builder;
+        }
+
+        foreach ($words as $word) {
+            $this->builder->where($column, 'LIKE', '%' . $word . '%');
+        }
+        return $this->builder;
+    }
+
+    /**
      * Helper for "include" filter
      *
      * @param  string $column
