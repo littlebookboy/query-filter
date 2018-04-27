@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use ReflectionMethod;
 use ReflectionParameter;
 
@@ -39,8 +40,8 @@ abstract class QueryFilter
      * Hydrate the filters from plain array.
      *
      * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
-     * @param    array $queries
-     * @return    static
+     * @param array $queries
+     * @return static
      */
     public static function hydrate(array $queries)
     {
@@ -54,7 +55,7 @@ abstract class QueryFilter
      * @param  Builder $builder
      * @return Builder
      */
-    public function apply(Builder $builder)
+    public function apply(Builder $builder): Builder
     {
         $this->builder = $builder;
 
@@ -78,7 +79,7 @@ abstract class QueryFilter
      *
      * @return array
      */
-    protected function filters()
+    protected function filters(): array
     {
         return $this->request->all();
     }
@@ -90,7 +91,7 @@ abstract class QueryFilter
      * @param array $value
      * @return bool
      */
-    protected function shouldCall($methodName, array $value)
+    protected function shouldCall(string $methodName, array $value): bool
     {
         if (!method_exists($this, $methodName)) {
             return false;
@@ -122,11 +123,11 @@ abstract class QueryFilter
     /**
      * Helper for "=" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string|number $value
      * @return Builder
      */
-    protected function equals($column, $value)
+    protected function equals(string $column, $value): Builder
     {
         return $this->builder->where($column, '=', $value);
     }
@@ -134,11 +135,11 @@ abstract class QueryFilter
     /**
      * Helper for "<>" or "!=" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string|number $value
      * @return Builder
      */
-    protected function notEquals($column, $value)
+    protected function notEquals(string $column, $value): Builder
     {
         return $this->builder->where($column, '!=', $value);
     }
@@ -146,11 +147,11 @@ abstract class QueryFilter
     /**
      * Helper for ">" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string|number $value
      * @return Builder
      */
-    protected function greaterThan($column, $value)
+    protected function greaterThan(string $column, $value): Builder
     {
         return $this->builder->where($column, '>', $value);
     }
@@ -158,11 +159,11 @@ abstract class QueryFilter
     /**
      * Helper for ">=" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string|number $value
      * @return Builder
      */
-    protected function greaterEquals($column, $value)
+    protected function greaterEquals(string$column, $value): Builder
     {
         return $this->builder->where($column, '>=', $value);
     }
@@ -170,11 +171,11 @@ abstract class QueryFilter
     /**
      * Helper for "<" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string|number $value
      * @return Builder
      */
-    protected function lessThan($column, $value)
+    protected function lessThan(string$column, $value): Builder
     {
         return $this->builder->where($column, '<', $value);
     }
@@ -182,11 +183,11 @@ abstract class QueryFilter
     /**
      * Helper for "<=" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string|number $value
      * @return Builder
      */
-    protected function lessEquals($column, $value)
+    protected function lessEquals(string $column, $value): Builder
     {
         return $this->builder->where($column, '<=', $value);
     }
@@ -194,11 +195,11 @@ abstract class QueryFilter
     /**
      * Helper for "LIKE" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  string $value
      * @return Builder
      */
-    protected function like($column, $value)
+    protected function like(string $column, string $value): Builder
     {
         if ($this->builder->getQuery()->getConnection()->getDriverName() == 'pgsql') {
             return $this->builder->where($column, 'ILIKE', '%' . $value . '%');
@@ -210,11 +211,11 @@ abstract class QueryFilter
     /**
      * Helper for "include" filter
      *
-     * @param  String $column
-     * @param  String $value
+     * @param  string $column
+     * @param  array|collection $value
      * @return Builder
      */
-    protected function in($column, $value)
+    protected function in(string $column, $value): Builder
     {
         return $this->builder->whereIn($column, $value);
     }
@@ -227,7 +228,7 @@ abstract class QueryFilter
      * @param Carbon|string $end
      * @return Builder
      */
-    protected function dtBetween($column, $begin, $end)
+    protected function dtBetween(string $column, $begin, $end): Builder
     {
         if (is_string($begin)) {
             $begin = Carbon::parse($begin);
@@ -237,16 +238,9 @@ abstract class QueryFilter
             $end = Carbon::parse($end);
         }
 
-        return $this->builder->where(function($qb) use ($column, $begin, $end) {
+        $this->builder->where($column, '>=', $begin->toDateTimestring());
+        $this->builder->where($column, '<=', $end->toDateTimestring());
 
-            if ($begin->gt($end)) {
-                $temp = $begin;
-                $begin = $end;
-                $end = $temp;
-            }
-
-            $qb->where($column, '>=', $begin->toDateTimeString());
-            $qb->where($column, '<=', $end->toDateTimeString());
-        });
+        return $this->builder;
     }
 }

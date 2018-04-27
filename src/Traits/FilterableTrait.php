@@ -1,8 +1,9 @@
 <?php
 
-namespace Kblais\QueryFilter;
+namespace Kblais\QueryFilter\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Kblais\QueryFilter\QueryFilter;
 
 trait FilterableTrait
 {

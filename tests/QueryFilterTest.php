@@ -2,6 +2,7 @@
 
 namespace Kblais\QueryFilter\Tests;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase;
 
@@ -35,6 +36,132 @@ class QueryFilterTest extends TestCase
         ];
 
         $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testNotEqualsFilterApplies()
+    {
+        $builder = $this->makeBuilder(Filters\PostNotEqualsFilter::class);
+
+        $expected = [
+            "type" => "Basic",
+            "column" => "category",
+            "operator" => "!=",
+            "value" => "bar",
+            "boolean" => "and",
+        ];
+
+        $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testGreaterThanFilterApplies()
+    {
+        $builder = $this->makeBuilder(Filters\PostGreaterThanFilter::class);
+
+        $expected = [
+            "type" => "Basic",
+            "column" => "category",
+            "operator" => ">",
+            "value" => "bar",
+            "boolean" => "and",
+        ];
+
+        $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testGreaterEqualsFilterApplies()
+    {
+        $builder = $this->makeBuilder(Filters\PostGreaterEqualsFilter::class);
+
+        $expected = [
+            "type" => "Basic",
+            "column" => "category",
+            "operator" => ">=",
+            "value" => "bar",
+            "boolean" => "and",
+        ];
+
+        $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testLessThanFilterApplies()
+    {
+        $builder = $this->makeBuilder(Filters\PostLessThanFilter::class);
+
+        $expected = [
+            "type" => "Basic",
+            "column" => "category",
+            "operator" => "<",
+            "value" => "bar",
+            "boolean" => "and",
+        ];
+
+        $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testLessEqualsFilterApplies()
+    {
+        $builder = $this->makeBuilder(Filters\PostLessEqualsFilter::class);
+
+        $expected = [
+            "type" => "Basic",
+            "column" => "category",
+            "operator" => "<=",
+            "value" => "bar",
+            "boolean" => "and",
+        ];
+
+        $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testWhereInFilterApplies()
+    {
+        $values = ['foo', 'bar'];
+        $request = new Request;
+        $request->merge([
+            'category' => $values
+        ]);
+
+        $builder = $this->makeBuilder(Filters\PostWhereInFilter::class, $request);
+
+        $expected = [
+            "type" => "In",
+            "column" => "category",
+            "values" => $values,
+            "boolean" => "and",
+        ];
+
+        $this->assertContains($expected, $builder->getQuery()->wheres);
+    }
+
+    public function testDtBetweenFilterApplies()
+    {
+        $begin = Carbon::now();
+        $end = $begin->copy()->addSeconds(10);
+        $request = new Request;
+        $request->merge([
+            'category' => ['begin' => $begin, 'end' => $end]
+        ]);
+
+        $builder = $this->makeBuilder(Filters\PostDtBetweenFilter::class, $request);
+
+        $expected = [
+            [
+                "type" => "Basic",
+                "column" => "category",
+                "operator" => ">=",
+                "value" => $begin->toDateTimeString(),
+                "boolean" => "and",
+            ],
+            [
+                "type" => "Basic",
+                "column" => "category",
+                "operator" => "<=",
+                "value" => $end->toDateTimeString(),
+                "boolean" => "and",
+            ],
+        ];
+
+        $this->assertArraySubset($expected, $builder->getQuery()->wheres);
     }
 
     public function testRawFilterApplies()
