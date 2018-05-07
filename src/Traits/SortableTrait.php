@@ -9,6 +9,12 @@ trait SortableTrait
     use HasSortingTrait;
 
     /**
+     * 定義可被過濾的欄位
+     * @var array
+     */
+    protected $sortable = [];
+
+    /**
      * Sort the collection by the sort field
      * Examples:
      *      array => ['title', '-created_at', 'updated_at']
@@ -34,9 +40,11 @@ trait SortableTrait
                 default:
                     return [$field => 'asc'];
             }
-        })->each(function (string $order, string $field) use ($query) {
-            $query->orderBy($field, $order);
-            $this->addSorter($field, $order);
+        })->each(function (string $field, string $order) use ($query, $sortable) {
+            if (in_array($field, $sortable)) {
+                $query->orderBy($field, $order);
+                $this->addSorter($field, $order);
+            }
         });
 
         return $query;
