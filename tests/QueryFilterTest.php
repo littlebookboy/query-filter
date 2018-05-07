@@ -42,13 +42,6 @@ class QueryFilterTest extends TestCase
                 "operator" => "LIKE",
                 "value" => "%ipsum%",
                 "boolean" => "and",
-            ],
-            [
-                "type" => "Basic",
-                "column" => "content",
-                "operator" => "LIKE",
-                "value" => "%dolor%",
-                "boolean" => "and",
             ]
         ];
 
