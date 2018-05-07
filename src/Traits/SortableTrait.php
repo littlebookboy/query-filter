@@ -15,11 +15,11 @@ trait SortableTrait
      *      string sort= title,-created_at,updated_at
      *
      * @source https://blog.jgrossi.com/2018/queryfilter-a-model-filtering-concept/
-     * @param Builder $builder
+     * @param Builder $query
      * @param array|string $value
      * @return Builder $builder
      */
-    protected function sort(Builder $builder, $value)
+    protected function scopeSortBy($query, $value)
     {
         if (is_string($value)) {
             $value = explode(',', $value);
@@ -34,11 +34,11 @@ trait SortableTrait
                 default:
                     return [$field => 'asc'];
             }
-        })->each(function (string $order, string $field) use ($builder) {
-            $builder->orderBy($field, $order);
+        })->each(function (string $order, string $field) use ($query) {
+            $query->orderBy($field, $order);
             $this->addSorter($field, $order);
         });
 
-        return $builder;
+        return $query;
     }
 }

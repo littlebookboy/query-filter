@@ -40,24 +40,6 @@ abstract class QueryFilter
     }
 
     /**
-     * Hydrate the filters from plain array.
-     *
-     * @author Andrea Marco Sartori, source https://github.com/cerbero90/query-filters
-     *
-     * usage:
-     *      $filters = YourModelFilters::hydrate($request->query()); // $request is \Illuminate\Http\Request::class
-     *      return YourModel::filter($filters)->get();
-     *
-     * @param array $queries
-     * @return static
-     */
-    public static function hydrate(array $queries)
-    {
-        $request = new Request($queries);
-        return new static($request);
-    }
-
-    /**
      * Apply the filters to the builder.
      *
      * @param  Builder $builder
