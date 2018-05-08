@@ -4,6 +4,7 @@ namespace Kblais\QueryFilter\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Kblais\QueryFilter\Tests\Models\Post;
 use Orchestra\Testbench\TestCase;
 
 class QueryFilterTest extends TestCase
@@ -286,6 +287,18 @@ class QueryFilterTest extends TestCase
 
         $this->assertNotEmpty($builder->getQuery()->wheres);
         $this->assertArraySubset($expected, $builder->getQuery()->wheres);
+    }
+
+    /**
+     * 測試排序
+     */
+    public function testSortBy()
+    {
+        $post = new Post();
+        $post->sortBy([
+            'created_at',
+            '-updated_at',
+        ]);
     }
 
     /**

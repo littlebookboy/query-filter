@@ -22,16 +22,16 @@ trait SortableTrait
      *
      * @source https://blog.jgrossi.com/2018/queryfilter-a-model-filtering-concept/
      * @param Builder $query
-     * @param array|string $value
+     * @param array|string $sortBy
      * @return Builder $builder
      */
-    protected function scopeSortBy($query, $value)
+    public function scopeSortBy($query, $sortBy)
     {
-        if (is_string($value)) {
-            $value = explode(',', $value);
+        if (is_string($sortBy)) {
+            $sortBy = explode(',', $sortBy);
         }
 
-        collect($value)->mapWithKeys(function (string $field) {
+        collect($sortBy)->mapWithKeys(function (string $field) {
             switch (substr($field, 0, 1)) {
                 case '-':
                     return [substr($field, 1) => 'desc'];
@@ -40,8 +40,8 @@ trait SortableTrait
                 default:
                     return [$field => 'asc'];
             }
-        })->each(function (string $field, string $order) use ($query, $sortable) {
-            if (in_array($field, $sortable)) {
+        })->each(function (string $order, string $field) use ($query) {
+            if (in_array($field, $this->sortable)) {
                 $query->orderBy($field, $order);
                 $this->addSorter($field, $order);
             }
