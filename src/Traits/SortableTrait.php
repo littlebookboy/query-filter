@@ -6,13 +6,17 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait SortableTrait
 {
-    use HasSortingTrait;
-
     /**
-     * 定義可被過濾的欄位
+     * 定義可被排序的欄位
      * @var array
      */
     protected $sortable = [];
+
+    /**
+     * 記錄排序的條件
+     * @var array
+     */
+    protected $sortBy = [];
 
     /**
      * Sort the collection by the sort field
@@ -48,5 +52,32 @@ trait SortableTrait
         });
 
         return $query;
+    }
+
+    /**
+     * @param array $sortable
+     */
+    public function setSortable(array $sortable)
+    {
+        $this->sortable = $sortable;
+    }
+
+    /**
+     * 新增排序條件
+     * @param string $field
+     * @param string $order
+     */
+    public function addSorter(string $field, string $order)
+    {
+        $this->sortBy[$field] = $order;
+    }
+
+    /**
+     * 新增排序條件
+     * @return array
+     */
+    public function getSortBy()
+    {
+        return $this->sortBy;
     }
 }
