@@ -57,6 +57,8 @@ abstract class QueryFilter
             $methodName = camel_case($name);
             if ($value !== 0 && $value !== '0') {
                 $value = array_filter([$value]);
+            } else {
+                $value = [$value];
             }
             if ($this->shouldCall($methodName, $value)) {
                 call_user_func_array([$this, $methodName], $value);
