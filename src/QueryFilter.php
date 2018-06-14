@@ -55,7 +55,9 @@ abstract class QueryFilter
 
         foreach ($this->filters() as $name => $value) {
             $methodName = camel_case($name);
-            $value = array_filter([$value]);
+            if ($value !== 0 && $value !== '0') {
+                $value = array_filter([$value]);
+            }
             if ($this->shouldCall($methodName, $value)) {
                 call_user_func_array([$this, $methodName], $value);
                 $this->addFilter($methodName, $value);
